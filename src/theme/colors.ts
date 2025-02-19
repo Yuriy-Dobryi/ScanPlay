@@ -1,0 +1,38 @@
+const Colors = {
+  light: {
+    bgPrimary: "#fff",
+    bgHeader: "rgb(245, 245, 245)",
+    bgScreen: "rgb(245, 245, 245)",
+    bgSearch: "rgba(232, 189, 124, 0.2)",
+    tPrimary: "rgb(22, 22, 22)",
+    tSecondary: "rgb(138, 137, 144)",
+    brand: "rgb(133, 58, 27)",
+    icon: "#DC9394",
+    spinner: "black",
+    tabBar: "white",
+    tabIconActive: "rgb(133, 58, 27)",
+    tabIconInactive: "rgb(77, 82, 100)",
+    tabItemActive: "rgba(220, 193, 144, 0.8)",
+    border: "#404044",
+    error: "#ff9d9a",
+  },
+  dark: {
+    bgPrimary: "black",
+    bgHeader: "black",
+    bgScreen: "black",
+    bgSearch: "rgba(232, 189, 124, 0.2)",
+    tPrimary: "white",
+    tSecondary: "rgb(177, 173, 173)",
+    brand: "green",
+    icon: "#DC9394",
+    spinner: "white",
+    tabBar: "white",
+    tabIconActive: "rgb(133, 58, 27)",
+    tabIconInactive: "rgba(177, 173, 173, 0.8)",
+    tabItemActive: "transparent",
+    border: "#404044",
+    error: "#ff9d9a",
+  },
+};
+
+export default Colors;
