@@ -54,3 +54,19 @@ export const addHistoryItem = async ({
     return null;
   }
 };
+
+export const getMediaItemById = async (
+  id: string
+): Promise<HistoryItem | null> => {
+  try {
+    const snapshot = await database().ref(`/video-list/${id}`).once("value");
+
+    const result = snapshot.val();
+    if (!result) return null;
+
+    return { id, ...(result as Omit<HistoryItem, "id">) };
+  } catch (error) {
+    console.error("Error searching media item:", error);
+    return null;
+  }
+};

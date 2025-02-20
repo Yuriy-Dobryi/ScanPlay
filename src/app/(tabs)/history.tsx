@@ -16,12 +16,12 @@ const HistoryScreen = () => {
     (async () => {
       const user = await signIn();
       if (user?.uid) {
-        const history = await getHistoryList();
+        // const history = await getHistoryList();
         // await addHistoryItem({
         //   imageUrl: "https://example.com/image4.jpg",
         //   title: "QR Code 3",
         // });
-        console.log({ history });
+        // console.log({ history });
       }
     })();
   }, []);

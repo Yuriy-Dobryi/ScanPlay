@@ -19,6 +19,7 @@ import {
 import useScanner from "~/hooks/useScanner";
 import { useIsFocused } from "@react-navigation/native";
 import useAppStatus from "~/hooks/useAppState";
+import { getMediaItemById } from "~/api/history";
 
 const ScanScreen = () => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -41,8 +42,6 @@ const ScanScreen = () => {
   });
 
   const onLayoutScanRegion = (event: LayoutChangeEvent) => {
-    console.log({ event: event.nativeEvent.layout });
-
     const { x, y, width, height } = event.nativeEvent.layout;
     setScanRegion({
       x,
@@ -54,7 +53,7 @@ const ScanScreen = () => {
 
   const codeScanner = useCodeScanner({
     codeTypes: ["qr"],
-    regionOfInterest: scanRegion,
+    // regionOfInterest: scanRegion,
     onCodeScanned: (codes) => {
       if (codes.length > 0 && !hasScanned.current) {
         hasScanned.current = true;
@@ -63,7 +62,13 @@ const ScanScreen = () => {
         Alert.alert("QR Code Found", codes[0]?.value, [
           {
             text: "OK",
-            onPress: () => {
+            onPress: async () => {
+              const videoItem = await getMediaItemById("video1");
+              console.log({ videoItem });
+
+              if (videoItem) {
+                console.log({ title: videoItem.title });
+              }
               router.push("/history");
               setTimeout(() => {
                 hasScanned.current = false;
