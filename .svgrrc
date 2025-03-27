@@ -1,5 +1,6 @@
 {
   "replaceAttrValues": {
-    "stroke": "currentColor"
+    "stroke": "currentColor",
+    "fill": "currentColor"
   }
 }

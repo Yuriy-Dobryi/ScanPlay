@@ -19,7 +19,11 @@ import {
 import useScanner from "~/hooks/useScanner";
 import { useIsFocused } from "@react-navigation/native";
 import useAppStatus from "~/hooks/useAppState";
-import { getMediaItemById } from "~/api/history";
+import {
+  addHistoryItem,
+  getHistoryList,
+  getMediaItemById,
+} from "~/api/history";
 
 const ScanScreen = () => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -56,27 +60,38 @@ const ScanScreen = () => {
     // regionOfInterest: scanRegion,
     onCodeScanned: (codes) => {
       if (codes.length > 0 && !hasScanned.current) {
+        const qrResult = codes[0].value;
         hasScanned.current = true;
-
         setIsReadyToScan(false);
-        Alert.alert("QR Code Found", codes[0]?.value, [
-          {
-            text: "OK",
-            onPress: async () => {
-              const videoItem = await getMediaItemById("video1");
-              console.log({ videoItem });
 
-              if (videoItem) {
-                console.log({ title: videoItem.title });
-              }
-              router.push("/history");
-              setTimeout(() => {
-                hasScanned.current = false;
-                setIsReadyToScan(true);
-              }, 1000);
+        qrResult &&
+          Alert.alert("QR Code Found", qrResult, [
+            {
+              text: "OK",
+              onPress: async () => {
+                const mediaItem = await getMediaItemById(qrResult);
+                console.log({ mediaItem });
+
+                if (mediaItem) {
+                  const historyList = await getHistoryList();
+                  const isItemInHistory = historyList.some(
+                    (item) => item.id === qrResult
+                  );
+                  if (isItemInHistory) {
+                    console.log("Item In History");
+                  } else {
+                    console.log("Not In History");
+                    await addHistoryItem(mediaItem);
+                  }
+                }
+                router.push("/history");
+                setTimeout(() => {
+                  hasScanned.current = false;
+                  setIsReadyToScan(true);
+                }, 1000);
+              },
             },
-          },
-        ]);
+          ]);
       }
     },
   });

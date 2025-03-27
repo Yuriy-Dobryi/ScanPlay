@@ -1,14 +1,16 @@
 import database from "@react-native-firebase/database";
 import auth from "@react-native-firebase/auth";
 
-export type HistoryItem = {
+export type HistoryItemT = {
   id: string;
-  imageUrl: string;
   title: string;
+  description?: string;
+  imageUrl?: string;
+  mediaUrl: string;
   createdAt: number;
 };
 
-export const getHistoryList = async (): Promise<HistoryItem[]> => {
+export const getHistoryList = async (): Promise<HistoryItemT[]> => {
   try {
     const uid = auth().currentUser?.uid;
     if (!uid) throw new Error("User ID not found");
@@ -23,7 +25,7 @@ export const getHistoryList = async (): Promise<HistoryItem[]> => {
       ? Object.entries(historyList)
           .map(([key, value]) => ({
             id: key,
-            ...(value as Omit<HistoryItem, "id">),
+            ...(value as Omit<HistoryItemT, "id">),
           }))
           .sort((a, b) => a.title.localeCompare(b.title))
       : [];
@@ -33,19 +35,15 @@ export const getHistoryList = async (): Promise<HistoryItem[]> => {
   }
 };
 
-export const addHistoryItem = async ({
-  imageUrl,
-  title,
-}: Omit<HistoryItem, "id" | "createdAt">) => {
+export const addHistoryItem = async (data: Omit<HistoryItemT, "createdAt">) => {
   try {
     const uid = auth().currentUser?.uid;
     if (!uid) throw new Error("User ID not found");
 
-    const newItemRef = database().ref(`/users/${uid}/history-list`).push();
+    const newItemRef = database().ref(`/users/${uid}/history-list/${data.id}`);
     await newItemRef.set({
-      imageUrl,
-      title,
       createdAt: database.ServerValue.TIMESTAMP,
+      ...data,
     });
 
     return newItemRef;
@@ -57,14 +55,14 @@ export const addHistoryItem = async ({
 
 export const getMediaItemById = async (
   id: string
-): Promise<HistoryItem | null> => {
+): Promise<HistoryItemT | null> => {
   try {
     const snapshot = await database().ref(`/video-list/${id}`).once("value");
 
     const result = snapshot.val();
     if (!result) return null;
 
-    return { id, ...(result as Omit<HistoryItem, "id">) };
+    return { id, ...(result as Omit<HistoryItemT, "id">) };
   } catch (error) {
     console.error("Error searching media item:", error);
     return null;
