@@ -1,20 +1,20 @@
 import { StyleSheet } from "react-native";
-import type { ColorScheme } from "~/hooks/useTheme";
-import useTheme from "~/hooks/useTheme";
-import Container from "~/components/Container";
+import type { ThemeColor } from "~/hooks/useThemeColor";
+import useThemeColor from "~/hooks/useThemeColor";
+import ScreenCard from "~/components/ScreenCard";
 import ThemedText from "~/components/ThemedText/index";
 
 const ProfileScreen = () => {
-  const theme = useTheme();
+  const theme = useThemeColor();
   const styles = styling(theme);
 
   return (
-    <Container>
+    <ScreenCard scroll>
       <ThemedText>Profile screen</ThemedText>
-    </Container>
+    </ScreenCard>
   );
 };
 
 export default ProfileScreen;
 
-const styling = (t: ColorScheme) => StyleSheet.create({});
+const styling = (t: ThemeColor) => StyleSheet.create({});

@@ -3,8 +3,8 @@ import { useSegments, useRouter } from "expo-router";
 import { HistoryIcon, ScanIcon, SettingsIcon } from "~/assets/icons";
 import useThemePalette from "~/hooks/useThemePalette";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { ColorScheme } from "~/hooks/useTheme";
-import useTheme from "~/hooks/useTheme";
+import type { ThemeColor } from "~/hooks/useThemeColor";
+import useThemeColor from "~/hooks/useThemeColor";
 import { Colors } from "~/theme";
 import { moderateScale } from "react-native-size-matters";
 
@@ -15,11 +15,16 @@ const TabBar = () => {
   const focusedTab = segments[1] ?? "scan";
 
   const { colors } = useThemePalette();
-  const theme = useTheme();
+  const theme = useThemeColor();
   const styles = styling(theme);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View
+      style={[
+        styles.container,
+        { paddingBottom: insets.bottom + moderateScale(6) },
+      ]}
+    >
       <TouchableOpacity
         style={[
           styles.tabItem,
@@ -30,8 +35,8 @@ const TabBar = () => {
         onPress={() => router.push("/scan")}
       >
         <ScanIcon
-          width={28}
-          height={28}
+          width={32}
+          height={32}
           color={
             focusedTab === "scan"
               ? colors.tabIconActive
@@ -56,7 +61,6 @@ const TabBar = () => {
       <TouchableOpacity
         style={[
           styles.tabItem,
-          { rowGap: 0 },
           focusedTab === "history" && {
             backgroundColor: colors.tabItemActive,
           },
@@ -64,8 +68,8 @@ const TabBar = () => {
         onPress={() => router.push("/history")}
       >
         <HistoryIcon
-          width={28}
-          height={28}
+          width={32}
+          height={32}
           color={
             focusedTab === "history"
               ? colors.tabIconActive
@@ -97,8 +101,8 @@ const TabBar = () => {
         onPress={() => router.push("/settings")}
       >
         <SettingsIcon
-          width={28}
-          height={28}
+          width={32}
+          height={32}
           color={
             focusedTab === "settings"
               ? colors.tabIconActive
@@ -123,13 +127,13 @@ const TabBar = () => {
   );
 };
 
-const styling = (t: ColorScheme) =>
+const styling = (t: ThemeColor) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
       justifyContent: "space-around",
       alignItems: "center",
-      paddingTop: moderateScale(1),
+      paddingTop: moderateScale(6),
       paddingHorizontal: moderateScale(8),
       backgroundColor: Colors[t].bgHeader,
     },
@@ -138,7 +142,6 @@ const styling = (t: ColorScheme) =>
       justifyContent: "center",
       alignItems: "center",
       rowGap: moderateScale(2),
-      height: moderateScale(48),
       borderRadius: moderateScale(6),
     },
     title: {

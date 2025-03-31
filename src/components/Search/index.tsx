@@ -1,21 +1,25 @@
 import { forwardRef } from "react";
-import { TextInput, StyleSheet, View, type TextInputProps } from "react-native";
+import {
+  type TextInputProps,
+  TextInput,
+  StyleSheet,
+  View,
+  Pressable,
+} from "react-native";
 import { moderateScale } from "react-native-size-matters";
-import type { ColorScheme } from "~/hooks/useTheme";
 import { Colors, Fonts } from "~/theme";
-import useTheme from "~/hooks/useTheme";
-import useThemePalette from "~/hooks/useThemePalette";
 import { CloseIcon, SearchIcon } from "~/assets/icons";
+import useThemeColor, { type ThemeColor } from "~/hooks/useThemeColor";
 
 interface Props extends Omit<TextInputProps, "value" | "placeholder"> {
   value?: string | number | null;
   placeholder?: string | null;
+  onClear?: () => void;
 }
 
 const Search = forwardRef<TextInput, Props>(
-  ({ value, placeholder, numberOfLines = 1, style, ...rest }, ref) => {
-    const theme = useTheme();
-    const { colors } = useThemePalette();
+  ({ value, placeholder, onClear, numberOfLines = 1, style, ...rest }, ref) => {
+    const theme = useThemeColor();
     const styles = styling(theme);
 
     return (
@@ -23,35 +27,44 @@ const Search = forwardRef<TextInput, Props>(
         <SearchIcon
           width={moderateScale(26)}
           height={moderateScale(26)}
-          color={colors.brand}
+          color={Colors[theme].brand}
         />
         <TextInput
           ref={ref}
           value={value?.toString() || ""}
           style={[styles.input, style]}
           placeholder='Search'
-          placeholderTextColor={colors.brand}
-          hitSlop={10}
+          placeholderTextColor={Colors[theme].tPlaceholder}
           numberOfLines={numberOfLines}
+          autoCorrect={false}
+          hitSlop={10}
           {...rest}
         />
-        <CloseIcon
-          width={moderateScale(18)}
-          height={moderateScale(18)}
-          color={colors.brand}
-        />
+        {value && (
+          <Pressable
+            onPress={onClear}
+            hitSlop={{ top: 12, bottom: 12, left: 16, right: 16 }}
+          >
+            <CloseIcon
+              width={moderateScale(20)}
+              height={moderateScale(20)}
+              color={Colors[theme].brand}
+            />
+          </Pressable>
+        )}
       </View>
     );
   }
 );
 export default Search;
 
-const styling = (t: ColorScheme) =>
+const styling = (t: ThemeColor) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
       alignItems: "center",
-      height: moderateScale(36),
+      height: moderateScale(42),
+      marginBottom: moderateScale(4),
       paddingHorizontal: moderateScale(16),
       columnGap: moderateScale(6),
       backgroundColor: Colors[t].bgSearch,
@@ -59,8 +72,8 @@ const styling = (t: ColorScheme) =>
     },
     input: {
       flex: 1,
-      color: Colors[t].brand,
+      color: Colors[t].tSearch,
       fontFamily: Fonts.SF_PRO_Regular,
-      fontSize: moderateScale(15),
+      fontSize: moderateScale(18),
     },
   });

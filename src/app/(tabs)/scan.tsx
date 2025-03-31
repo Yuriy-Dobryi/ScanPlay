@@ -24,6 +24,7 @@ import {
   getHistoryList,
   getMediaItemById,
 } from "~/api/history";
+import ScreenCard from "~/components/ScreenCard";
 
 const ScanScreen = () => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -138,7 +139,7 @@ const ScanScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScreenCard scroll={false} headerProps={{ title: "Find a code to scan" }}>
       <Camera
         device={device}
         codeScanner={codeScanner}
@@ -162,7 +163,7 @@ const ScanScreen = () => {
           <View style={[styles.corner, styles.bottomRight]} />
         </View>
       </View>
-    </View>
+    </ScreenCard>
   );
 };
 

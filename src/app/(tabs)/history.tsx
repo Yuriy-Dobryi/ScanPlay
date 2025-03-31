@@ -1,28 +1,50 @@
 import { useCallback, useEffect, useState } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { signIn } from "~/api/auth/signIn";
-import {
-  getHistoryList,
-  addHistoryItem,
-  type HistoryItemT,
-} from "~/api/history";
-import Container from "~/components/Container";
+import { getHistoryList, type HistoryItemT } from "~/api/history";
+import ScreenCard from "~/components/ScreenCard";
 import Search from "~/components/Search";
 import ThemedText from "~/components/ThemedText/index";
-import type { ColorScheme } from "~/hooks/useTheme";
-import useTheme from "~/hooks/useTheme";
+import type { ThemeColor } from "~/hooks/useThemeColor";
+import useThemeColor from "~/hooks/useThemeColor";
 import { FlashList, type ListRenderItem } from "@shopify/flash-list";
 import { moderateScale } from "react-native-size-matters";
-import { PlayIcon } from "~/assets/icons";
 import HistoryItem from "~/components/HistoryItem";
 import { Colors, Fonts } from "~/theme";
+import appleAuth, {
+  AppleButton,
+} from "@invertase/react-native-apple-authentication";
+import useAuthStore from "~/zustand/authStore";
+import { logger } from "~/utils/logger";
+import useThemeStore from "~/zustand/themeStore";
+import Spinner from "~/components/Spinner";
 
 const HistoryScreen = () => {
+  const { token, setToken, setUserAppleId } = useAuthStore();
+  const [search, setSearch] = useState("");
   const [historyItems, setHistoryItems] = useState<HistoryItemT[]>([]);
+  const { setTheme } = useThemeStore();
   const [loading, setLoading] = useState(false);
 
-  const theme = useTheme();
+  const theme = useThemeColor();
   const styles = styling(theme);
+
+  async function onAppleButtonPress() {
+    try {
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        // Note: it appears putting FULL_NAME first is important, see issue #293
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+      if (appleAuthRequestResponse.identityToken) {
+        setToken(appleAuthRequestResponse.identityToken);
+        setUserAppleId(appleAuthRequestResponse.user);
+      }
+      logger({ appleAuthRequestResponse });
+    } catch (error) {
+      console.log({ error });
+    }
+  }
 
   const renderItem: ListRenderItem<HistoryItemT> = useCallback(
     ({ item }) => <HistoryItem {...item} onPress={() => null} />,
@@ -62,35 +84,57 @@ const HistoryScreen = () => {
   }, []);
 
   return (
-    <Container style={{ paddingHorizontal: 0 }}>
-      <Search />
-      <FlashList
-        data={historyItems}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        estimatedItemSize={moderateScale(50)}
-        // If defaulted to "false", the keyboard can overlap the content below (iOS)
-        automaticallyAdjustKeyboardInsets
-        // Keyboard overlap fix for Android platform
-        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
-        keyboardShouldPersistTaps='handled'
-        ListEmptyComponent={renderEmptyHistoryList}
-        contentContainerStyle={styles.historyList}
-        ItemSeparatorComponent={renderSeparator}
+    <ScreenCard scroll={false} headerProps={{ title: "History" }}>
+      <Search
+        value={search}
+        onChangeText={setSearch}
+        onClear={() => setSearch("")}
       />
-    </Container>
+      {token ? (
+        loading ? (
+          <Spinner />
+        ) : (
+          <FlashList
+            data={historyItems}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            estimatedItemSize={moderateScale(50)}
+            // If defaulted to "false", the keyboard can overlap the content below (iOS)
+            automaticallyAdjustKeyboardInsets
+            // Keyboard overlap fix for Android platform
+            keyboardDismissMode={
+              Platform.OS === "ios" ? "interactive" : "on-drag"
+            }
+            keyboardShouldPersistTaps='handled'
+            ListEmptyComponent={renderEmptyHistoryList}
+            contentContainerStyle={styles.historyList}
+            ItemSeparatorComponent={renderSeparator}
+          />
+        )
+      ) : (
+        <AppleButton
+          buttonStyle={AppleButton.Style.DEFAULT}
+          buttonType={AppleButton.Type.SIGN_IN}
+          style={{
+            width: moderateScale(200),
+            height: moderateScale(50),
+            alignSelf: "center",
+            marginVertical: moderateScale(20),
+          }}
+          onPress={onAppleButtonPress}
+        />
+      )}
+    </ScreenCard>
   );
 };
 
 export default HistoryScreen;
 
-const styling = (t: ColorScheme) =>
+const styling = (t: ThemeColor) =>
   StyleSheet.create({
     historyList: {
-      paddingTop: moderateScale(18),
-      paddingLeft: moderateScale(16),
-      paddingRight: moderateScale(24),
-      gap: 20,
+      paddingTop: moderateScale(14),
+      paddingBottom: moderateScale(20),
     },
     emptyContainer: {
       flex: 1,

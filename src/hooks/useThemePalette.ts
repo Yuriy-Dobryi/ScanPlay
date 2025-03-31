@@ -1,8 +1,8 @@
-import { Colors } from '~/theme';
-import useTheme from './useTheme';
+import { Colors } from "~/theme";
+import useThemeColor from "./useThemeColor";
 
 const useThemePalette = () => {
-  const theme = useTheme();
+  const theme = useThemeColor();
   return { colors: Colors[theme] };
 };
 

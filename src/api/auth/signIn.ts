@@ -6,7 +6,7 @@ export async function signIn() {
       "yuriy.dobryi@gmail.com",
       "PljhjdPljhjd"
     );
-    console.log("User signed in: ", userCredential.user);
+    // console.log("User signed in: ", userCredential.user);
     return userCredential.user;
   } catch (error) {
     console.error("Error signing in: ", error);

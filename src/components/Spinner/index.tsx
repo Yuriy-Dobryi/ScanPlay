@@ -1,8 +1,8 @@
 import type { ActivityIndicatorProps } from "react-native";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import type { ColorScheme } from "~/hooks/useTheme";
-import useTheme from "~/hooks/useTheme";
-import useThemePalette from "~/hooks/useThemePalette";
+import type { ThemeColor } from "~/hooks/useThemeColor";
+import useThemeColor from "~/hooks/useThemeColor";
+import { Colors } from "~/theme";
 
 interface Props extends ActivityIndicatorProps {
   type?: "contain" | "cover";
@@ -15,14 +15,13 @@ const Spinner = ({
   style,
   ...rest
 }: Props) => {
-  const theme = useTheme();
-  const { colors } = useThemePalette();
-  const displayTheme = styling(theme);
+  const theme = useThemeColor();
+  const containerStyle = styling(theme);
 
   return (
-    <View style={[displayTheme[type], style]}>
+    <View style={[containerStyle[type], style]}>
       <ActivityIndicator
-        color={color || colors.spinner}
+        color={color || Colors[theme].spinner}
         size={size}
         {...rest}
       />
@@ -31,7 +30,7 @@ const Spinner = ({
 };
 export default Spinner;
 
-const styling = (t: ColorScheme) =>
+const styling = (t: ThemeColor) =>
   StyleSheet.create({
     contain: {
       position: "absolute",
