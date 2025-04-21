@@ -6,9 +6,11 @@ import {
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import "react-native-get-random-values";
+
 import { useAppSetup } from "~/hooks/useAppSetup";
 // import useAppState from "~/hooks/useAppState";
 import useSystemThemeChange from "~/hooks/useSystemThemeChange";

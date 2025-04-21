@@ -2,6 +2,7 @@ import { StyleSheet, View, Pressable } from "react-native";
 import type { ThemeColor } from "~/hooks/useThemeColor";
 import useThemeColor from "~/hooks/useThemeColor";
 import ScreenCard from "~/components/ScreenCard";
+import LocationSearch from "~/components/LocationSearch";
 import ThemedText from "~/components/ThemedText/index";
 import useThemeStore, { type ThemeStore } from "~/zustand/themeStore";
 import { moderateScale } from "react-native-size-matters";
@@ -25,7 +26,7 @@ const SettingsScreen = () => {
   const styles = styling(themeColor);
 
   return (
-    <ScreenCard scroll headerProps={{ title: "Settings" }}>
+    <ScreenCard scroll={false} headerProps={{ title: "Settings" }}>
       <View style={styles.optionItem}>
         {/* <ThemedText>Theme</ThemedText> */}
         <View style={styles.themeList}>
@@ -46,6 +47,7 @@ const SettingsScreen = () => {
           ))}
         </View>
       </View>
+      <LocationSearch />
     </ScreenCard>
   );
 };
